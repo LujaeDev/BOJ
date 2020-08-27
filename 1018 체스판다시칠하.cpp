@@ -39,4 +39,3 @@ int main(void) {
 	printf("%d", ret);
 	return 0;
 }
-myResult[a[j].checked] += 1
