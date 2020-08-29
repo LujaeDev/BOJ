@@ -4,15 +4,15 @@
 using namespace std;
 
 vector<vector<int>> adj;
-vector<bool> isFisrt;
+vector<bool> isFirst;
 int Time[501];
 int ret[501];
 
 void dfs(int here, int currentTime) {
-	if (ret[here] > currentTime)
+	if (!isFirst[here] && ret[here] >= currentTime)
 		return;
-
-	ret[here] = max(ret[here], currentTime);
+	
+	ret[here] = currentTime;
 	
 	for (int i = 0; i < adj[here].size(); ++i) {
 		int there = adj[here][i];
@@ -26,7 +26,7 @@ void solve(int N) {
 		ret[i] = Time[i];
 
 	for (int i = 1; i <= N; ++i)
-		if(isFisrt[i])
+		if(isFirst[i])
 			dfs(i, Time[i]);
 	
 	for (int i = 1; i <= N; ++i)
@@ -39,7 +39,7 @@ int main(void) {
 	cin >> N;
 	
 	adj = vector<vector<int>>(N + 1);
-	isFisrt = vector<bool>(N + 1, true);
+	isFirst = vector<bool>(N + 1, true);
 
 	for (int i = 1; i <= N; ++i) {
 		scanf("%d", &Time[i]);
@@ -47,7 +47,7 @@ int main(void) {
 		cin >> tmp;
 		
 		while (tmp != -1) {
-			isFisrt[i] = false;
+			isFirst[i] = false;
 			adj[tmp].push_back(i);
 			scanf("%d", &tmp);
 		}
