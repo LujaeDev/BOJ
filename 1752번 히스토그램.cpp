@@ -13,7 +13,9 @@ int solve(int left, int right) {
 
 	int lo = mid, hi = mid + 1;
 	int height = min(h[lo], h[hi]);
+	
 	ret = max(ret, (hi - lo + 1) * height);
+	
 	while (lo > left || hi < right) {
 		if (hi < right && (lo == left || h[hi + 1] > h[lo - 1]))
 			height = min(height, h[++hi]);
