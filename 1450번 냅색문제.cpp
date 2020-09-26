@@ -1,4 +1,3 @@
-풀긴 풀었지만 느림
 #include<iostream>
 #include<algorithm>
 #include<vector>
