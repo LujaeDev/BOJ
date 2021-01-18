@@ -15,10 +15,10 @@ fun sol(rowStep: Int, currentRowState: Int, nextRowState: Int, colStep: Int, N: 
     if(colStep == cache.size)
         return 0
 
-    if(cache[colStep][currentRowState] != -1)
-        return cache[colStep][currentRowState]
-
     if(rowStep == N){
+        if(cache[colStep][currentRowState] != -1)
+            return cache[colStep][currentRowState]
+
         var cnt1 = 0
 
         for(i in 0 until N)
@@ -63,8 +63,7 @@ fun main(){
                     basicState[i] = basicState[i] or (1 shl j)
         }
 
-        sol(0, basicState[0], basicState[1], 0, N)
-        println(cache[0].maxOrNull()!!)
+        println(sol(0, basicState[0], basicState[1], 0, N))
     }
 
 }
