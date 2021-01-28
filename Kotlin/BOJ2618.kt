@@ -8,52 +8,68 @@ private fun distance(p1: Pair<Int, Int>, p2: Pair<Int, Int>): Int{
 }
 
 private fun sol(pos: Array<Pair<Int, Int>>, N: Int){
-    val bw = BufferedWriter(OutputStreamWriter(System.out))
-    val dp = Array<Array<Int>>(pos.size){Array<Int>(3){0}}
-    val choice = Array<Array<String>>(pos.size){Array<String>(3){""}}
-    val posPolice1 = Array<Array<Pair<Int, Int>>>(pos.size){Array<Pair<Int, Int>>(3){Pair(0, 0)}}
-    val posPolice2 = Array<Array<Pair<Int, Int>>>(pos.size){Array<Pair<Int, Int>>(3){Pair(0, 0)}}
+    val INF = 1000000001
     val W = pos.size
+    val bw = BufferedWriter(OutputStreamWriter(System.out))
+    val dp = Array<Array<Int>>(W){Array<Int>(W){INF}}
+    val choice = Array<Array<Pair<Int, Int>>>(W){Array<Pair<Int, Int>>(W){Pair(-1, -1)}}
 
-    dp[0][1] = distance(Pair(1, 1), pos[0])
-    dp[0][2] = distance(Pair(N, N), pos[0])
-    choice[0][1] = "1"
-    choice[0][2] = "2"
+    dp[2][1] = distance(pos[0], pos[2])
+    dp[0][2] = distance(pos[1], pos[2])
 
-    posPolice1[0][1] = pos[0]
-    posPolice1[0][2] = Pair(1, 1)
-    posPolice2[0][1] = Pair(N, N)
-    posPolice2[0][2] = pos[0]
-
-    for(i in 1 until W){
-        if(dp[i - 1][1] + distance(posPolice1[i - 1][1], pos[i]) < dp[i - 1][2] + distance(posPolice1[i - 1][2], pos[i])){
-            dp[i][1] = dp[i - 1][1] + distance(posPolice1[i - 1][1], pos[i])
-            posPolice2[i][1] = posPolice2[i - 1][1]
-            choice[i][1] = choice[i - 1][1] + "1"
-        }else{
-            dp[i][1] = dp[i - 1][2] + distance(posPolice1[i - 1][2], pos[i])
-            posPolice2[i][1] = posPolice2[i - 1][2]
-            choice[i][1] = choice[i - 1][2] + "1"
+    choice[2][1] = Pair(0, 1)
+    choice[0][2] = Pair(0, 1)
+    
+    for(step in 3 until W){
+        for(i in 0 until step) {
+            if(dp[step][i] > dp[step - 1][i] + distance(pos[step - 1], pos[step])){
+                dp[step][i] = dp[step - 1][i] + distance(pos[step - 1], pos[step])
+                choice[step][i] = Pair(step - 1, i)
+            }
+            if(dp[i][step] > dp[i][step - 1] + distance(pos[step - 1], pos[step])){
+                dp[i][step] = dp[i][step - 1] + distance(pos[step - 1], pos[step])
+                choice[i][step] = Pair(i, step - 1)
+            }
+            if(dp[step][step - 1] > dp[i][step - 1] + distance(pos[i], pos[step])){
+                dp[step][step - 1] = dp[i][step - 1] + distance(pos[i], pos[step])
+                choice[step][step - 1] = Pair(i, step - 1)
+            }
+            if(dp[step - 1][step] > dp[step - 1][i] + distance(pos[i], pos[step])){
+                dp[step - 1][step] = dp[step - 1][i] + distance(pos[i], pos[step])
+                choice[step - 1][step] = Pair(step - 1, i)
+            }
         }
-        if(dp[i - 1][2] + distance(posPolice2[i - 1][2], pos[i]) < dp[i - 1][1] + distance(posPolice2[i - 1][1], pos[i])){
-            dp[i][2] = dp[i - 1][2] + distance(posPolice2[i - 1][2], pos[i])
-            posPolice1[i][2] = posPolice1[i - 1][2]
-            choice[i][2] = choice[i - 1][2] + "2"
-        }else{
-            dp[i][2] = dp[i - 1][1] + distance(posPolice2[i - 1][1], pos[i])
-            posPolice1[i][2] = posPolice1[i - 1][1]
-            choice[i][2] = choice[i - 1][1] + "2"
-        }
-
-        posPolice1[i][1] = pos[i]
-        posPolice2[i][2] = pos[i]
     }
 
-    val last = if(dp[W - 1][1] < dp[W - 1][2]) 1 else 2
+    var ret = INF
+    var lastPos = Pair(0, 0)
+    var tmpPos = Pair(0 , 0)
+    var retSeq = Array<Int>(W - 2){0}
 
-    bw.write("${dp[W - 1][last]}\n")
-    for(ch in choice[W - 1][last])
-        bw.write(ch + "\n")
+    for(i in 0 until W){
+        if(ret > dp[i][W - 1]){
+            ret = dp[i][W - 1]
+            lastPos = Pair(i, W - 1)
+        }
+    }
+    for(i in 0 until W){
+        if(ret > dp[W - 1][i]){
+            ret = dp[W - 1][i]
+            lastPos = Pair(W - 1, i)
+        }
+    }
+
+    tmpPos = lastPos
+    for(i in W - 3 downTo 0){
+        val nextPos = choice[tmpPos.first][tmpPos.second]
+        retSeq[i] = if(nextPos.first == tmpPos.first) 2 else 1
+        tmpPos = nextPos
+    }
+
+    bw.write("${ret}\n")
+    for(i in retSeq.indices)
+        bw.write("${retSeq[i]}\n")
+
     bw.close()
 }
 
@@ -62,9 +78,12 @@ fun main(){
 
     val N = br.readLine().toInt()
     val W = br.readLine().toInt()
-    val pos = Array<Pair<Int, Int>>(W){Pair(0, 0)}
+    val pos = Array<Pair<Int, Int>>(W + 2){Pair(0, 0)}
 
-    for(i in 0 until W){
+    pos[0] = Pair(1, 1)
+    pos[1] = Pair(N, N)
+
+    for(i in 2 until W + 2){
         val (SN, EW) = br.readLine().split(" ").map{it.toInt()}
         pos[i] = Pair(SN, EW)
     }
