@@ -1,38 +1,33 @@
 MOD = 10007
 cache = [[-1 for j in range(53)] for i in range(53)]
+dp = [[-1 for j in range(53)] for i in range(53)]
 
 
 def combination(n, r):
     if n == r or r == 0:
         return 1
-    else:
-        return combination(n - 1, r - 1) + combination(n - 1, r)
+    if cache[n][r] != -1:
+        return cache[n][r]
+
+    cache[n][r] = combination(n - 1, r - 1) + combination(n - 1, r)
+    return cache[n][r]
 
 
-def selectCnt(line, cnt):
-    if cnt == 0:
+def cal(line, num):
+    if num == 0:
         return 1
-    elif cnt < 0 or line < 0:
+    elif num < 0 or line == 0:
         return 0
-    if cache[line][cnt] != -1:
-        return cache[line][cnt]
+    if dp[line][num] != -1:
+        return dp[line][num]
 
     ret = 0
     for i in range(0, 4):
-        ret += combination(4, i) * selectCnt(line - 1, cnt - i)
+        ret += combination(4, i) * cal(line - 1, num - i)
 
-    cache[line][cnt] = ret
+    dp[line][num] = ret
     return ret
 
 
 N = int(input())
-
-ret = 0
-
-for i in range(1, N // 4 + 1):
-    if N - i * 4 > 3 * (13 - i):
-        continue
-    ret += combination(13, i) * selectCnt(13 - i, N - i * 4)
-    ret %= MOD
-
-print(ret)
+print(0 if N < 4 else (combination(52, N) - cal(13, N)) % MOD)
