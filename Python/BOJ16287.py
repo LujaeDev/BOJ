@@ -1,7 +1,7 @@
 W, N = map(int, input().split(" "))
 pack = list(map(int, input().split(" ")))
 
-cache = [0 for i in range(0, 80001)]
+cache = [0 for i in range(0, 800001)]
 
 for i in range(0, N):
     for j in range(i + 1, N):
