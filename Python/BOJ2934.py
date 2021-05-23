@@ -16,20 +16,21 @@ class Seg:
         self.update_lazy(node, s, e, l, r)
 
         if e < l or s > r:
-            return self.tree[node]
+            return
         if l <= s and e <= r:
             if s != e:
                 self.tree[2 * node] += 1
                 self.tree[2 * node + 1] += 1
 
-            return self.tree[node]
+            return
         
         mid = int((s + e) / 2)
-        self.tree[node] = self.update_range(2 * node, s, mid, l, r) + self.update_range(2 * node + 1, mid + 1, e, l , r)
-        return self.tree[node]
+        self.update_range(2 * node, s, mid, l, r)
+        self.update_range(2 * node + 1, mid + 1, e, l , r)
         
     def query(self, node, s, e, pos):
         self.update_lazy(node, s, e, pos, pos)
+        
         if s > pos or e < pos:
             return 0
         
