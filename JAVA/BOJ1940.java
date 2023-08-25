@@ -1,0 +1,36 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+public class BOJ1940 {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int N = Integer.parseInt(br.readLine()), p1 = 0, p2 = N - 1;
+        int M = Integer.parseInt(br.readLine()), tmpSum = 0, ret = 0;
+        int[] arr = new int[N];
+        
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        for (int i = 0; i < N; ++i) 
+            arr[i] = Integer.parseInt(st.nextToken());
+
+        Arrays.sort(arr);
+
+        while(p1 < p2){
+            tmpSum = arr[p1] + arr[p2];
+
+            if(tmpSum > M)
+                p2--;
+            else if (tmpSum < M)
+                p1++;
+            else{
+                ret++;
+                p1++;
+            }
+        }
+
+        System.out.println(ret);
+    }
+}
